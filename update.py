@@ -18,11 +18,10 @@ CATEGORIES = {
 
 def get_m3u8(url):
     try:
-        # 终极形态：Cookie身份 + Node环境 + 动态下载最新解密组件
         cmd = [
             "yt-dlp", 
             "--js-runtimes", "node",  
-            "--remote-components", "ejs:github",  # <--- 新增：官方推荐的动态解密组件
+            "--remote-components", "ejs:github",
             "--cookies", "cookies.txt", 
             "--live-from-start",
             "-g", 
@@ -55,12 +54,16 @@ def main():
         for name, url in channels.items():
             print(f"正在抓取: {name}")
             real_link = get_m3u8(url)
-            if real_link and "m3u8" in real_link:
+            
+            # 🚨 核心修复：只要是 http 开头的真实链接，就写入文件！去掉了 "m3u8" 的强制限制
+            if real_link and real_link.startswith("http"):
                 m3u_content += f'#EXTINF:-1 tvg-logo="{LOGO_URL}" group-title="{cat}",{name}\n{real_link}\n'
+            else:
+                print(f"  -> ⚠️ 链接无效或已被过滤")
     
     with open("live.m3u", "w", encoding="utf-8") as f:
         f.write(m3u_content)
-    print(f"\n✅ 运行完毕！")
+    print(f"\n✅ 运行完毕！文件已更新。")
 
 if __name__ == "__main__":
     main()
