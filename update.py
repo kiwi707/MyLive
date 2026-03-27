@@ -18,10 +18,11 @@ CATEGORIES = {
 
 def get_m3u8(url):
     try:
-        # 修复：将 nodejs 改为它能识别的 node
+        # 终极形态：Cookie身份 + Node环境 + 动态下载最新解密组件
         cmd = [
             "yt-dlp", 
-            "--js-runtimes", "node",  # <--- 就是这里，去掉了 js 两个字母
+            "--js-runtimes", "node",  
+            "--remote-components", "ejs:github",  # <--- 新增：官方推荐的动态解密组件
             "--cookies", "cookies.txt", 
             "--live-from-start",
             "-g", 
