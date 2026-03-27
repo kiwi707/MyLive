@@ -1,5 +1,6 @@
 import subprocess
 import datetime
+import os
 
 MY_NAME = "老杨TV"
 LOGO_URL = "https://raw.githubusercontent.com/kiwi707/MyLive/main/logo.png"
@@ -8,7 +9,7 @@ CATEGORIES = {
     "新闻资讯": {
         "TVBS-新闻": "https://www.youtube.com/@TVBSNEWS01/live",
         "东森-新闻": "https://www.youtube.com/@newsebc/live",
-        "凤凰-资讯": "https://www.youtube.com/@凤凰卫视PhoenixTV/live" # 换成了凤凰卫视，避开美国IP封锁
+        "半岛-新闻": "https://www.youtube.com/@aljazeeraenglish/live" # 换成了不封锁美国IP的频道
     },
     "音乐轮播": {
         "Lofi-Girl": "https://www.youtube.com/@LofiGirl/live"
@@ -17,11 +18,11 @@ CATEGORIES = {
 
 def get_m3u8(url):
     try:
-        # 更换伪装策略：这次伪装成苹果 iOS 客户端，避开网页版的机器人检测
+        # 终极杀招：带上刚才上传的 cookies.txt 去请求
         cmd = [
             "yt-dlp", 
+            "--cookies", "cookies.txt",  # <--- 核心修改：读取同目录下的身份证明
             "--live-from-start",
-            "--extractor-args", "youtube:player_client=ios", # <--- 核心修改：伪装成苹果设备
             "-g", 
             url
         ]
@@ -37,6 +38,10 @@ def get_m3u8(url):
         return None
 
 def main():
+    # 检查 cookie 文件是否存在
+    if not os.path.exists("cookies.txt"):
+        print("⚠️ 警告：未找到 cookies.txt 文件，抓取可能会被拦截！")
+
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     m3u_content = f'#EXTM3U x-tvg-url="" x-author="{MY_NAME}"\n'
     
