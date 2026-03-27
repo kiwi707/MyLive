@@ -9,7 +9,7 @@ CATEGORIES = {
     "新闻资讯": {
         "TVBS-新闻": "https://www.youtube.com/@TVBSNEWS01/live",
         "东森-新闻": "https://www.youtube.com/@newsebc/live",
-        "半岛-新闻": "https://www.youtube.com/@aljazeeraenglish/live" # 换成了不封锁美国IP的频道
+        "半岛-新闻": "https://www.youtube.com/@aljazeeraenglish/live"
     },
     "音乐轮播": {
         "Lofi-Girl": "https://www.youtube.com/@LofiGirl/live"
@@ -18,10 +18,11 @@ CATEGORIES = {
 
 def get_m3u8(url):
     try:
-        # 终极杀招：带上刚才上传的 cookies.txt 去请求
+        # 终极杀招加强版：允许运行 JS 解密，并带上 Cookie
         cmd = [
             "yt-dlp", 
-            "--cookies", "cookies.txt",  # <--- 核心修改：读取同目录下的身份证明
+            "--js-runtimes", "nodejs",  # <--- 新增：强行调用 Node.js 来破解 YouTube 的 JS 验证机制
+            "--cookies", "cookies.txt", 
             "--live-from-start",
             "-g", 
             url
@@ -38,7 +39,6 @@ def get_m3u8(url):
         return None
 
 def main():
-    # 检查 cookie 文件是否存在
     if not os.path.exists("cookies.txt"):
         print("⚠️ 警告：未找到 cookies.txt 文件，抓取可能会被拦截！")
 
