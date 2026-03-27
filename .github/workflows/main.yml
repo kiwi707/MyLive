@@ -1,0 +1,27 @@
+name: Auto Update Live
+
+on:
+  schedule:
+    - cron: '0 */4 * * *' # 每4小时自动跑一次
+  workflow_dispatch:      # 支持手动点运行
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+      - name: Run Python
+        run: python update.py
+      - name: Push to Repo
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add live.m3u
+          git commit -m "Update links" || exit 0
+          git push
