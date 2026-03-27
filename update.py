@@ -18,10 +18,10 @@ CATEGORIES = {
 
 def get_m3u8(url):
     try:
-        # 终极杀招加强版：允许运行 JS 解密，并带上 Cookie
+        # 修复：将 nodejs 改为它能识别的 node
         cmd = [
             "yt-dlp", 
-            "--js-runtimes", "nodejs",  # <--- 新增：强行调用 Node.js 来破解 YouTube 的 JS 验证机制
+            "--js-runtimes", "node",  # <--- 就是这里，去掉了 js 两个字母
             "--cookies", "cookies.txt", 
             "--live-from-start",
             "-g", 
